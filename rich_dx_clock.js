@@ -108,7 +108,7 @@ function checkClockUrl() {
     }
 }
 
-function checkClock() {
+async function checkClock() {
     return new Promise(async resolve => {
         $.post(checkClockUrl(), (err, resp, data) => {
             try {
