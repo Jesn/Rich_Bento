@@ -1,5 +1,9 @@
-const { log } = require("console");
+/*
 
+[task_local]
+# 电信打卡
+0 07 * * * https://raw.githubusercontent.com/Jesn/Rich.Bento/dev/rich_dx_clock.js, tag=电信50今币打卡, enabled=true
+*/
 
 const $ = new Env('电信打卡');
 const notify = $.isNode() ? require('./sendNotify') : '';
