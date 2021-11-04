@@ -2,31 +2,25 @@ const { log } = require("console");
 
 
 const $ = new Env('电信打卡');
-
 const notify = $.isNode() ? require('./sendNotify') : '';
-
 let openIds = [], allMessage = ''
-
-
 
 !(async () => {
     try {
-
         if (process.env.DX_OPENID) {
             openIds = process.env.DX_OPENID.split('&');
             for (let index = 0; index < openIds.length; index++) {
                 $.index = i + 1;
-                $.openid=openIds[index]
+                $.openid = openIds[index]
                 await checkStatus();
             }
         } else {
-            allMessage += '暂无OpenID，跳过执行';
+            allMessage += '暂无OpenID，请添加DX_OPENID环境变量，多个用&符号分隔';
         }
 
         if ($.isNode() && allMessage) {
             await notify.sendNotify(`${$.name}`, allMessage)
         }
-
     } catch (e) {
         $.logErr(e)
     }
