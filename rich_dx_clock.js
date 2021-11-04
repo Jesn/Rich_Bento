@@ -14,7 +14,7 @@ let openIds = [], allMessage = ''
         if (process.env.DX_OPENID) {
             openIds = process.env.DX_OPENID.split('&');
             for (let index = 0; index < openIds.length; index++) {
-                $.index = i + 1;
+                $.index = index + 1;
                 $.openid = openIds[index]
                 await checkStatus();
             }
@@ -59,9 +59,9 @@ function checkStatusUrl() {
 }
 
 // 检查打卡状态
-async function checkStatus() {
-    return new Promise(async (resolve) => {
-        $.post(checkStatusUrl(), (err, resp, data) => {
+function checkStatus() {
+    return new Promise(async resolve => {
+        $.post(checkStatusUrl(), async (err, resp, data) => {
             try {
                 if (err) {
                     console.log(`${JSON.stringify(err)}`)
@@ -69,12 +69,11 @@ async function checkStatus() {
                 } else {
                     data = JSON.parse(data);
                     console.log(data);
-                    console.log(data.description.indexOf('今天已打卡') !== -1)
+                    // 如果今天没有打卡则执行打卡操作
                     if (data.description.indexOf('今天已打卡') == -1) {
                         await checkClock()
                     } else {
                         allMessage += `第${$.index}个账号，今日已打卡，无需重复操作`
-
                     }
                 }
             } catch (e) {
@@ -108,7 +107,7 @@ function checkClockUrl() {
     }
 }
 
-async function checkClock() {
+ function checkClock() {
     return new Promise(async resolve => {
         $.post(checkClockUrl(), (err, resp, data) => {
             try {
