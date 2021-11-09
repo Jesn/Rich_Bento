@@ -1,9 +1,13 @@
 /*
+1、当前支付50金币，参与第二天打开
+2、第二天早上5:00 - 8:00 参与打卡
+3、支付50金币，参与第二天打开
 
 [task_local]
 # 电信打卡
-0 07 * * * https://raw.githubusercontent.com/Jesn/Rich.Bento/dev/rich_dx_clock.js, tag=电信50今币打卡, enabled=true
+0 7 * * * https://raw.githubusercontent.com/Jesn/Rich.Bento/dev/rich_10000_clock.js, tag=电信50今币打卡, enabled=true
 */
+
 
 const $ = new Env('电信打卡');
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -107,7 +111,7 @@ function checkClockUrl() {
     }
 }
 
- function checkClock() {
+function checkClock() {
     return new Promise(async resolve => {
         $.post(checkClockUrl(), (err, resp, data) => {
             try {
@@ -124,6 +128,55 @@ function checkClockUrl() {
             }
         })
     })
+}
+
+function situationUrl() {
+    return {
+        "url": "https://wx.ah.189.cn/wxws/clock/situation",
+        "raw_url": "https://wx.ah.189.cn/wxws/clock/situation",
+        "method": "post",
+        "headers": {
+            "Host": "wx.ah.189.cn",
+            "Accept": "*/*",
+            "X-Requested-With": "XMLHttpRequest",
+            "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36 MicroMessenger/7.0.9.501 NetType/WIFI MiniProgramEnv/Windows WindowsWechat",
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+            "Sec-Fetch-Site": "same-origin",
+            "Sec-Fetch-Mode": "cors",
+            "Sec-Fetch-Dest": "empty",
+            "Referer": `https://wx.ah.189.cn/ts/clock-front/index.html?openid=${$.openid}`,
+            "Accept-Language": "en-us,en"
+        },
+        "body": `openid=${$.openid}`
+    }
+
+}
+
+// 早起打卡总体详情查询
+function situation() {
+    return new Promise(async resolve => {
+        $.post(situationUrl(), (err, resp, data) => {
+            try {
+                if (err) {
+                    console.log(`${JSON.stringify(err)}`)
+                    console.log(`${$.name} API请求失败，请检查网络重试`);
+                } else {
+                    data = JSON.parse(data)
+                    console.log(data)
+                    allMessage += `当前奖金池总金额为:${data.object.totalIntegral}金币`
+                }
+            } catch (e) {
+                $.logErr(e)
+            }
+        })
+
+    })
+}
+
+
+// 早起打开  5:00 -- 8::00
+function daka() {
+
 }
 
 
