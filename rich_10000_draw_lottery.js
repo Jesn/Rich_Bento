@@ -1,8 +1,4 @@
 /*
-1、当前支付50金币，参与第二天打开
-2、第二天早上5:00 - 8:00 参与打卡
-3、支付50金币，参与第二天打开
-
 [task_local]
 # 电信摇大奖
 10 7 * * * https://raw.githubusercontent.com/Jesn/Rich.Bento/dev/rich_10000_draw_lottery.js, tag=电信摇大奖, enabled=true
@@ -20,7 +16,7 @@ let openIds = [], allMessage = '', lotteries = [], count = 6
             for (let index = 0; index < openIds.length; index++) {
                 $.index = index + 1;
                 $.openid = openIds[index]
-                await drawLottery();
+                drawLottery();
             }
         } else {
             allMessage += '暂无OpenID，请添加DX_OPENID环境变量，多个用&符号分隔';
@@ -72,8 +68,8 @@ function drawLotteryUrl() {
 
 }
 function drawLottery() {
-    return new Promise(async resolve => {
-        $.post(drawLotteryUrl(), async (err, resp, data) => {
+    return new Promise(resolve => {
+        $.post(drawLotteryUrl(), (err, resp, data) => {
             try {
                 if (err) {
                     console.log(`${JSON.stringify(err)}`)
