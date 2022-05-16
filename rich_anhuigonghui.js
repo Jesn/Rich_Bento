@@ -11,20 +11,48 @@ const $ = new Env("安徽工会签到");
 const notify = $.isNode() ? require("./sendNotify") : "";
 let message = ''
 
+let userInfoArr = [], openId = '', code = ''
+
+// 判断环境变量里面是否有ANHUI_GongHui
+if (process.env.ANHUI_GongHui) {
+    if (process.env.ANHUI_GongHui.indexOf('&') > -1) {
+        userInfoArr = process.env.ANHUI_GongHui.split('&');
+    } else if (process.env.ANHUI_GongHui.indexOf('\n') > -1) {
+        userInfoArr = process.env.ANHUI_GongHui.split('\n');
+    } else {
+        userInfoArr = [process.env.ANHUI_GongHui];
+    }
+}
+
 
 !(async () => {
     try {
-        // 签到
-        await qiandao();
+        for (let index = 0; index < userInfoArr.length; index++) {
+            try {
+                const userinfo = userInfoArr[index];
+                $.index = index + 1
 
-        // 阅读文章
-        await readNewList();
-        
-        if ($.isNode()) {
-            if (message.length > 0) {
-                await notify.sendNotify(`${$.name}`, message)
+                openId = decodeURIComponent(userinfo.match(/openId=([^; ]+)(?=;?)/) && userinfo.match(/openId=([^; ]+)(?=;?)/)[1])
+                code = decodeURIComponent(userinfo.match(/code=([^; ]+)(?=;?)/) && userinfo.match(/code=([^; ]+)(?=;?)/)[1])
+
+                // 签到
+                await qiandao();
+
+                // 阅读文章
+                await readNewList();
+
+                if ($.isNode()) {
+                    if (message.length > 0) {
+                        message = `【账号${$.index}】 ` + message
+                        await notify.sendNotify(`${$.name}`, message)
+                    }
+                }
+            } catch (error) {
+
             }
         }
+
+
     } catch (e) {
         $.logErr(e)
         await notify.sendNotify(`${$.name}`, "执行失败:" + e)
@@ -41,7 +69,7 @@ let message = ''
 function qiandao() {
     return new Promise(resolve => {
         const option = {
-            "url": "http://nwx.ahghw.org/act/api/qiandao?openId=otGxowGXb-pjuFi9XTfqKpNN8vLs",
+            "url": `http://nwx.ahghw.org/act/api/qiandao?openId=${openId}`,
             "method": "post",
             "headers": {
                 "Host": "nwx.ahghw.org",
@@ -49,7 +77,7 @@ function qiandao() {
                 "Origin": "http://nwx.ahghw.org",
                 "X-Requested-With": "XMLHttpRequest",
                 "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36 NetType/WIFI MicroMessenger/7.0.20.1781(0x6700143B) WindowsWechat(0x63060012)",
-                "Referer": "http://nwx.ahghw.org/act/api?code=061nEF100e45SN1I8i000OboUT3nEF1r&state=ctweixin",
+                "Referer": `http://nwx.ahghw.org/act/api?code=${code}&state=ctweixin`,
                 "Accept-Language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7"
             }
         }
@@ -76,21 +104,19 @@ function readNewList() {
     return new Promise(resolve => {
         // 获取阅读列表
         const option = {
-            "url": "http://nwx.ahghw.org/act/api/actJson?openId=otGxowGXb-pjuFi9XTfqKpNN8vLs",
+            "url": `http://nwx.ahghw.org/act/api/actJson?openId=${openId}`,
             "method": "get",
             "headers": {
                 'Host': 'nwx.ahghw.org',
                 'Accept': 'application/json, text/javascript, */*; q=0.01',
                 'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36 NetType/WIFI MicroMessenger/7.0.20.1781(0x6700143B) WindowsWechat(0x63060012)',
                 'X-Requested-With': 'XMLHttpRequest',
-                'Referer': 'http://nwx.ahghw.org/act/api?code=061nEF100e45SN1I8i000OboUT3nEF1r&state=ctweixin',
+                'Referer': `http://nwx.ahghw.org/act/api?code=${code}&state=ctweixin`,
                 'Accept-Language': 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7'
             }
         }
         $.get(option, (err, resp, data) => {
             try {
-
-
                 if (err) {
                     $.logErr(error)
                 } else {
@@ -117,14 +143,14 @@ function readNews(list) {
             const element = list[index]
             // 获取阅读列表
             const option = {
-                "url": `http://nwx.ahghw.org/act/api/yuedu?openId=otGxowGXb-pjuFi9XTfqKpNN8vLs&id=${element["id"]}`,
+                "url": `http://nwx.ahghw.org/act/api/yuedu?openId=${openId}s&id=${element["id"]}`,
                 "method": "get",
                 "headers": {
                     'Host': 'nwx.ahghw.org',
                     'Accept': '*/*',
                     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36 NetType/WIFI MicroMessenger/7.0.20.1781(0x6700143B) WindowsWechat(0x63060012)',
                     'X-Requested-With': 'XMLHttpRequest',
-                    'Referer': 'http://nwx.ahghw.org/act/api?code=081Wsr1w3CMjxY2Fkj1w3agxDM2Wsr1i&state=ctweixin',
+                    'Referer': `http://nwx.ahghw.org/act/api?code=${code}&state=ctweixin`,
                     'Accept-Language': 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7'
                 }
             }
