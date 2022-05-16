@@ -108,7 +108,7 @@ function readNews(list) {
         return
     }
     for (let index = 0; index < list.length; index++) {
-        const element = array[index];
+        const element = list[index];
 
         return new Promise(resolve => {
             // 获取阅读列表
