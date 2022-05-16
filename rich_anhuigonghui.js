@@ -91,6 +91,7 @@ function readNewList() {
                     $.logErr(error)
                 } else {
                     // return JSON.parse(data)
+                    console.log(data)
                     readNews(data)
                 }
             } catch (error) {
