@@ -16,8 +16,10 @@ let message = ''
     try {
         // 签到
         await qiandao();
+
         // 阅读文章
         await readNewList();
+        
         if ($.isNode()) {
             if (message.length > 0) {
                 await notify.sendNotify(`${$.name}`, message)
@@ -87,12 +89,14 @@ function readNewList() {
         }
         $.get(option, (err, resp, data) => {
             try {
+
+
                 if (err) {
                     $.logErr(error)
                 } else {
                     // return JSON.parse(data)
                     console.log(data)
-                    readNews(data)
+                    readNews(JSON.parse(data))
                 }
             } catch (error) {
                 $.logErr(error)
@@ -107,10 +111,10 @@ function readNews(list) {
         console.log("未拉取到列表");
         return
     }
-    for (let index = 0; index < list.length; index++) {
-        const element = list[index];
 
-        return new Promise(resolve => {
+    return new Promise(resolve => {
+        for (let index = 0; index < list.length; index++) {
+            const element = list[index]
             // 获取阅读列表
             const option = {
                 "url": `http://nwx.ahghw.org/act/api/yuedu?openId=otGxowGXb-pjuFi9XTfqKpNN8vLs&id=${element["id"]}`,
@@ -127,17 +131,22 @@ function readNews(list) {
             $.get(option, (err, resp, data) => {
                 try {
                     if (err) {
-                        $.logErr(error)
+                        $.logErr(err)
                     } else {
                         console.log(data)
                     }
-                } catch (error) {
-                    $.logErr(error)
+                } catch (err) {
+                    $.logErr(err)
                 }
             })
-        })
-    }
+            setTimeout(resolve, 2000);
+        }
+
+
+    })
+
 }
+
 
 
 
