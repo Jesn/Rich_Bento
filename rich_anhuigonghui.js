@@ -143,7 +143,7 @@ function readNews(list) {
             const element = list[index]
             // 获取阅读列表
             const option = {
-                "url": `http://nwx.ahghw.org/act/api/yuedu?openId=${openId}s&id=${element["id"]}`,
+                "url": `http://nwx.ahghw.org/act/api/yuedu?openId=${openId}&id=${element["id"]}`,
                 "method": "get",
                 "headers": {
                     'Host': 'nwx.ahghw.org',
