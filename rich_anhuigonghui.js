@@ -87,8 +87,13 @@ function qiandao() {
                 if (err) {
                     message = JSON.stringify(err)
                 } else {
-                    data = JSON.parse(data)
-                    message = data['msg']
+                    if (data == '') {
+                        message = "签到成功"
+                    } else {
+                        data = JSON.parse(data)
+                        message = data['msg']
+                    }
+
                 }
             } catch (e) {
                 $.logErr(e)
