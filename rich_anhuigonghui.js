@@ -87,6 +87,7 @@ function qiandao() {
                 if (err) {
                     message = JSON.stringify(err)
                 } else {
+                    console.log('签到日志:' + data)
                     if (data == '') {
                         message = "签到成功"
                     } else {
