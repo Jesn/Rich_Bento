@@ -41,12 +41,16 @@ if (process.env.ANHUI_GongHui) {
                 // 阅读文章
                 await readNewList();
 
-                if ($.isNode()) {
-                    if (message.length > 0) {
-                        message = `【账号${$.index}】 ` + message
-                        await notify.sendNotify(`${$.name}`, message)
-                    }
+                // if ($.isNode()) {
+                //     if (message.length > 0) {
+                //         message = `【账号${$.index}】 ` + message
+                //         await notify.sendNotify(`${$.name}`, message)
+                //     }
+                // }
+                if(message){
+                    await notify.sendNotify(`${$.name}`, message)
                 }
+
             } catch (error) {
 
             }
