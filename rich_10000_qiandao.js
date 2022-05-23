@@ -4,7 +4,7 @@
 10 9 * * * https://raw.githubusercontent.com/Jesn/Rich.Bento/dev/rich_10000_qiandao.js, tag=安徽电信签到, enabled=true
 */
 
-const $ = new Env("安徽电信签到");
+const $ = new Env("安徽工会签到");
 const notify = $.isNode() ? require("./sendNotify") : "";
 let message = "";
 
@@ -29,32 +29,38 @@ if (process.env.ANHUI_WX_10000_qiandao) {
 !(async () => {
   try {
     for (let index = 0; index < userInfoArr.length; index++) {
-      const userinfo = userInfoArr[index];
-      userIndex = index + 1;
-      userOpenId = decodeURIComponent(
-        userinfo.match(/userOpenId=([^; ]+)(?=;?)/) &&
-          userinfo.match(/userOpenId=([^; ]+)(?=;?)/)[1]
-      );
+      try {
+        for (let index = 0; index < userInfoArr.length; index++) {
+          const userInfo = userInfoArr[index];
+          userIndex = index + 1;
+          userOpenId = decodeURIComponent(
+            userInfo.match(/userOpenId=([^; ]+)(?=;?)/) &&
+              userInfo.match(/userOpenId=([^; ]+)(?=;?)/)[1]
+          );
 
-      code = decodeURIComponent(
-        userinfo.match(/code=([^; ]+)(?=;?)/) &&
-          userinfo.match(/code=([^; ]+)(?=;?)/)[1]
-      );
+          code = decodeURIComponent(
+            userInfo.match(/code=([^; ]+)(?=;?)/) &&
+              userInfo.match(/code=([^; ]+)(?=;?)/)[1]
+          );
 
-      clientOpenId = decodeURIComponent(
-        userinfo.match(/clientOpenId=([^; ]+)(?=;?)/) &&
-          userinfo.match(/clientOpenId=([^; ]+)(?=;?)/)[1]
-      );
-      if (userOpenId == "" || code == "" || clientOpenId == "") {
-        console.log(`第${index + 1}个账号信息缺失,${JSON.stringify(userinfo)}`);
-        continue;
-      }
+          clientOpenId = decodeURIComponent(
+            userInfo.match(/clientOpenId=([^; ]+)(?=;?)/) &&
+              userInfo.match(/clientOpenId=([^; ]+)(?=;?)/)[1]
+          );
+          if (userOpenId == "" || code == "" || clientOpenId == "") {
+            console.log(
+              `第${index + 1}个账号信息缺失,${JSON.stringify(userInfo)}`
+            );
+            continue;
+          }
 
-      await qiandao();
+          await qiandao();
+        }
+      } catch (error) {}
     }
   } catch (e) {
     $.logErr(e);
-    // await notify.sendNotify(`${$.name}`, "执行失败:" + e);
+    await notify.sendNotify(`${$.name}`, "执行失败:" + e);
   }
 })()
   .catch((e) => {
@@ -67,15 +73,19 @@ if (process.env.ANHUI_WX_10000_qiandao) {
 function qiandao() {
   return new Promise((resolve) => {
     const option = {
-      Host: "wx.ah.189.cn",
-      Origin: "http://wx.ah.189.cn",
-      "X-Requested-With": "XMLHttpRequest",
-      "User-Agent":
-        "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36 NetType/WIFI MicroMessenger/7.0.20.1781(0x6700143B) WindowsWechat(0x63060012)",
-      "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-      Referer: `http://wx.ah.189.cn/AhdxTjyl/qiandao.do?code=${code}&state=123`,
-      "Accept-Language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
-      Cookie: `openid=${userOpenId}`,
+      url: "http://wx.ah.189.cn/AhdxTjyl/qd.do",
+      method: "POST",
+      headers: {
+        Host: "wx.ah.189.cn",
+        Origin: "http://wx.ah.189.cn",
+        "X-Requested-With": "XMLHttpRequest",
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36 NetType/WIFI MicroMessenger/7.0.20.1781(0x6700143B) WindowsWechat(0x63060012)",
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        Referer: `http://wx.ah.189.cn/AhdxTjyl/qiandao.do?code=${code}&state=123`,
+        "Accept-Language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
+        Cookie: `openid=${userOpenId}`,
+      },
     };
 
     var dataString = `openid=${clientOpenId}`;
