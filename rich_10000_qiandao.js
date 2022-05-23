@@ -11,12 +11,11 @@ const notify = $.isNode() ? require("./sendNotify") : "";
 let message = "";
 
 let userInfoArr = [],
-  code = "",
-  userOpenId = "",
-  clientOpenId = "";
+  userIndex = 0;
+(code = ""), (userOpenId = ""), (clientOpenId = "");
 
 // 判断环境变量里面是否有ANHUI_GongHui
-if (process.env.ANHUI_GongHui) {
+if (process.env.ANHUI_WX_10000_qiandao) {
   if (process.env.ANHUI_WX_10000_qiandao.indexOf("&") > -1) {
     userInfoArr = process.env.ANHUI_WX_10000_qiandao.split("&");
   } else if (process.env.ANHUI_WX_10000_qiandao.indexOf("\n") > -1) {
@@ -30,6 +29,7 @@ if (process.env.ANHUI_GongHui) {
   try {
     for (let index = 0; index < userInfoArr.length; index++) {
       const userInfo = userInfoArr[index];
+      userIndex = index + 1;
       userOpenId = decodeURIComponent(
         userinfo.match(/userOpenId=([^; ]+)(?=;?)/) &&
           userinfo.match(/userOpenId=([^; ]+)(?=;?)/)[1]
@@ -76,6 +76,7 @@ function qiandao() {
     $.post(option, dataString, (err, resp, data) => {
       try {
         console.log(data);
+        await notify.sendNotify(`第${userIndex}个账号签到内容为:${data}`)
       } catch (error) {
         console.log(error);
       }
