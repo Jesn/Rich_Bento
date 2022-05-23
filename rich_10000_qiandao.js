@@ -76,7 +76,7 @@ function qiandao() {
     $.post(option, dataString, (err, resp, data) => {
       try {
         console.log(data);
-        await notify.sendNotify(`第${userIndex}个账号签到内容为:${data}`)
+        notify.sendNotify(`第${userIndex}个账号签到内容为:${data}`)
       } catch (error) {
         console.log(error);
       }
