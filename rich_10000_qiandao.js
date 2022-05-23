@@ -4,7 +4,7 @@
 10 9 * * * https://raw.githubusercontent.com/Jesn/Rich.Bento/dev/rich_10000_qiandao.js, tag=安徽电信签到, enabled=true
 */
 
-const $ = new Env("安徽工会签到");
+const $ = new Env("安徽电信签到");
 const notify = $.isNode() ? require("./sendNotify") : "";
 let message = "";
 
@@ -14,6 +14,8 @@ let userInfoArr = [],
   clientOpenId = "";
 
 let userIndex = 0;
+
+console.log(process.env.ANHUI_WX_10000_qiandao);
 
 // 判断环境变量里面是否有ANHUI_GongHui
 if (process.env.ANHUI_WX_10000_qiandao) {
@@ -30,33 +32,33 @@ if (process.env.ANHUI_WX_10000_qiandao) {
   try {
     for (let index = 0; index < userInfoArr.length; index++) {
       try {
-        for (let index = 0; index < userInfoArr.length; index++) {
-          const userInfo = userInfoArr[index];
-          userIndex = index + 1;
-          userOpenId = decodeURIComponent(
-            userInfo.match(/userOpenId=([^; ]+)(?=;?)/) &&
-              userInfo.match(/userOpenId=([^; ]+)(?=;?)/)[1]
-          );
+        const userInfo = userInfoArr[index];
+        userIndex = index + 1;
+        userOpenId = decodeURIComponent(
+          userInfo.match(/userOpenId=([^; ]+)(?=;?)/) &&
+            userInfo.match(/userOpenId=([^; ]+)(?=;?)/)[1]
+        );
 
-          code = decodeURIComponent(
-            userInfo.match(/code=([^; ]+)(?=;?)/) &&
-              userInfo.match(/code=([^; ]+)(?=;?)/)[1]
-          );
+        code = decodeURIComponent(
+          userInfo.match(/code=([^; ]+)(?=;?)/) &&
+            userInfo.match(/code=([^; ]+)(?=;?)/)[1]
+        );
 
-          clientOpenId = decodeURIComponent(
-            userInfo.match(/clientOpenId=([^; ]+)(?=;?)/) &&
-              userInfo.match(/clientOpenId=([^; ]+)(?=;?)/)[1]
+        clientOpenId = decodeURIComponent(
+          userInfo.match(/clientOpenId=([^; ]+)(?=;?)/) &&
+            userInfo.match(/clientOpenId=([^; ]+)(?=;?)/)[1]
+        );
+        if (userOpenId == "" || code == "" || clientOpenId == "") {
+          console.log(
+            `第${index + 1}个账号信息缺失,${JSON.stringify(userInfo)}`
           );
-          if (userOpenId == "" || code == "" || clientOpenId == "") {
-            console.log(
-              `第${index + 1}个账号信息缺失,${JSON.stringify(userInfo)}`
-            );
-            continue;
-          }
-
-          await qiandao();
+          continue;
         }
-      } catch (error) {}
+
+        await qiandao();
+      } catch (error) {
+        console.log(error);
+      }
     }
   } catch (e) {
     $.logErr(e);
