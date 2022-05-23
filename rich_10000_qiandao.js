@@ -4,15 +4,16 @@
 10 9 * * * https://raw.githubusercontent.com/Jesn/Rich.Bento/dev/rich_10000_qiandao.js, tag=安徽电信签到, enabled=true
 */
 
-const { resolve } = require("path");
-
 const $ = new Env("安徽电信签到");
 const notify = $.isNode() ? require("./sendNotify") : "";
 let message = "";
 
 let userInfoArr = [],
-  userIndex = 0;
-(code = ""), (userOpenId = ""), (clientOpenId = "");
+  code = "",
+  userOpenId = "",
+  clientOpenId = "";
+
+let userIndex = 0;
 
 // 判断环境变量里面是否有ANHUI_GongHui
 if (process.env.ANHUI_WX_10000_qiandao) {
@@ -55,7 +56,13 @@ if (process.env.ANHUI_WX_10000_qiandao) {
     $.logErr(e);
     // await notify.sendNotify(`${$.name}`, "执行失败:" + e);
   }
-});
+})()
+  .catch((e) => {
+    $.log("", `❌ ${$.name}, 失败! 原因: ${e}!`, "");
+  })
+  .finally(() => {
+    // $.done();
+  });
 
 function qiandao() {
   return new Promise((resolve) => {
@@ -76,7 +83,7 @@ function qiandao() {
     $.post(option, dataString, (err, resp, data) => {
       try {
         console.log(data);
-        notify.sendNotify(`第${userIndex}个账号签到内容为:${data}`)
+        notify.sendNotify(`第${userIndex}个账号签到内容为:${data}`);
       } catch (error) {
         console.log(error);
       }
