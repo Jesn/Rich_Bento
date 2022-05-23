@@ -1,185 +1,85 @@
 /*
 [task_local]
-# 安徽工会签到
-10 9 * * * https://raw.githubusercontent.com/Jesn/Rich.Bento/dev/rich_anhuigonghui.js, tag=安徽工会签到, enabled=true
+# 安徽电信签到
+10 9 * * * https://raw.githubusercontent.com/Jesn/Rich.Bento/dev/rich_10000_qiandao.js, tag=安徽电信签到, enabled=true
 */
 
-const $ = new Env("安徽工会签到");
+const { resolve } = require("path");
+
+const $ = new Env("安徽电信签到");
 const notify = $.isNode() ? require("./sendNotify") : "";
 let message = "";
 
 let userInfoArr = [],
-  openId = "",
-  code = "";
+  code = "",
+  userOpenId = "",
+  clientOpenId = "";
 
 // 判断环境变量里面是否有ANHUI_GongHui
 if (process.env.ANHUI_GongHui) {
-  if (process.env.ANHUI_GongHui.indexOf("&") > -1) {
-    userInfoArr = process.env.ANHUI_GongHui.split("&");
-  } else if (process.env.ANHUI_GongHui.indexOf("\n") > -1) {
-    userInfoArr = process.env.ANHUI_GongHui.split("\n");
+  if (process.env.ANHUI_WX_10000_qiandao.indexOf("&") > -1) {
+    userInfoArr = process.env.ANHUI_WX_10000_qiandao.split("&");
+  } else if (process.env.ANHUI_WX_10000_qiandao.indexOf("\n") > -1) {
+    userInfoArr = process.env.ANHUI_WX_10000_qiandao.split("\n");
   } else {
-    userInfoArr = [process.env.ANHUI_GongHui];
+    userInfoArr = [process.env.ANHUI_WX_10000_qiandao];
   }
 }
 
 !(async () => {
   try {
     for (let index = 0; index < userInfoArr.length; index++) {
-      try {
-        const userinfo = userInfoArr[index];
-        $.index = index + 1;
+      const userInfo = userInfoArr[index];
+      userOpenId = decodeURIComponent(
+        userinfo.match(/userOpenId=([^; ]+)(?=;?)/) &&
+          userinfo.match(/userOpenId=([^; ]+)(?=;?)/)[1]
+      );
 
-        openId = decodeURIComponent(
-          userinfo.match(/openId=([^; ]+)(?=;?)/) &&
-            userinfo.match(/openId=([^; ]+)(?=;?)/)[1]
-        );
-        code = decodeURIComponent(
-          userinfo.match(/code=([^; ]+)(?=;?)/) &&
-            userinfo.match(/code=([^; ]+)(?=;?)/)[1]
-        );
+      code = decodeURIComponent(
+        userinfo.match(/code=([^; ]+)(?=;?)/) &&
+          userinfo.match(/code=([^; ]+)(?=;?)/)[1]
+      );
 
-        // 签到
-        await qiandao();
+      clientOpenId = decodeURIComponent(
+        userinfo.match(/clientOpenId=([^; ]+)(?=;?)/) &&
+          userinfo.match(/clientOpenId=([^; ]+)(?=;?)/)[1]
+      );
+      if (userOpenId == "" || code == "" || clientOpenId == "") {
+        console.log(`第${index + 1}个账号信息缺失,${JSON.stringify(userinfo)}`);
+        continue;
+      }
 
-        // 阅读文章
-        await readNewList();
-
-        // if ($.isNode()) {
-        //     if (message.length > 0) {
-        //         message = `【账号${$.index}】 ` + message
-        //         await notify.sendNotify(`${$.name}`, message)
-        //     }
-        // }
-        if (message) {
-          console.log("获取到消息:" + message);
-          await notify.sendNotify(`${$.name}`, message);
-        } else {
-          console.log("未获取到消息");
-        }
-      } catch (error) {}
+      await qiandao();
     }
   } catch (e) {
     $.logErr(e);
-    await notify.sendNotify(`${$.name}`, "执行失败:" + e);
+    // await notify.sendNotify(`${$.name}`, "执行失败:" + e);
   }
-})()
-  .catch((e) => {
-    $.log("", `❌ ${$.name}, 失败! 原因: ${e}!`, "");
-  })
-  .finally(() => {
-    // $.done();
-  });
+});
 
 function qiandao() {
   return new Promise((resolve) => {
     const option = {
-      url: `http://nwx.ahghw.org/act/api/qiandao?openId=${openId}`,
-      method: "post",
-      headers: {
-        Host: "nwx.ahghw.org",
-        Accept: "application/json, text/javascript, */*; q=0.01",
-        Origin: "http://nwx.ahghw.org",
-        "X-Requested-With": "XMLHttpRequest",
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36 NetType/WIFI MicroMessenger/7.0.20.1781(0x6700143B) WindowsWechat(0x63060012)",
-        Referer: `http://nwx.ahghw.org/act/api?code=${code}&state=ctweixin`,
-        "Accept-Language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
-      },
+      Host: "wx.ah.189.cn",
+      Origin: "http://wx.ah.189.cn",
+      "X-Requested-With": "XMLHttpRequest",
+      "User-Agent":
+        "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36 NetType/WIFI MicroMessenger/7.0.20.1781(0x6700143B) WindowsWechat(0x63060012)",
+      "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+      Referer: `http://wx.ah.189.cn/AhdxTjyl/qiandao.do?code=${code}&state=123`,
+      "Accept-Language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
+      Cookie: `openid=${userOpenId}`,
     };
 
-    $.post(option, (err, resp, data) => {
-      try {
-        if (err) {
-          message = JSON.stringify(err);
-        } else {
-          console.log("签到日志:" + data);
-          if (data == "") {
-            message = "签到成功";
-          } else {
-            data = JSON.parse(data);
-            message = data["msg"];
-            console.log(message);
-          }
-        }
-      } catch (e) {
-        $.logErr(e);
-      } finally {
-        resolve();
-      }
-    });
-  });
-}
+    var dataString = `openid=${clientOpenId}`;
 
-function readNewList() {
-  return new Promise((resolve) => {
-    // 获取阅读列表
-    const option = {
-      url: `http://nwx.ahghw.org/act/api/actJson?openId=${openId}`,
-      method: "get",
-      headers: {
-        Host: "nwx.ahghw.org",
-        Accept: "application/json, text/javascript, */*; q=0.01",
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36 NetType/WIFI MicroMessenger/7.0.20.1781(0x6700143B) WindowsWechat(0x63060012)",
-        "X-Requested-With": "XMLHttpRequest",
-        Referer: `http://nwx.ahghw.org/act/api?code=${code}&state=ctweixin`,
-        "Accept-Language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
-      },
-    };
-    $.get(option, (err, resp, data) => {
+    $.post(option, dataString, (err, resp, data) => {
       try {
-        if (err) {
-          $.logErr(error);
-        } else {
-          // return JSON.parse(data)
-          console.log(data);
-          readNews(JSON.parse(data));
-        }
+        console.log(data);
       } catch (error) {
-        $.logErr(error);
+        console.log(error);
       }
     });
-  });
-}
-
-function readNews(list) {
-  // 读取文章
-  if (list == undefined || list == null || list == "") {
-    console.log("未拉取到列表");
-    return;
-  }
-
-  return new Promise((resolve) => {
-    for (let index = 0; index < list.length; index++) {
-      const element = list[index];
-      // 获取阅读列表
-      const option = {
-        url: `http://nwx.ahghw.org/act/api/yuedu?openId=${openId}&id=${element["id"]}`,
-        method: "get",
-        headers: {
-          Host: "nwx.ahghw.org",
-          Accept: "*/*",
-          "User-Agent":
-            "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36 NetType/WIFI MicroMessenger/7.0.20.1781(0x6700143B) WindowsWechat(0x63060012)",
-          "X-Requested-With": "XMLHttpRequest",
-          Referer: `http://nwx.ahghw.org/act/api?code=${code}&state=ctweixin`,
-          "Accept-Language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
-        },
-      };
-      $.get(option, (err, resp, data) => {
-        try {
-          if (err) {
-            $.logErr(err);
-          } else {
-            console.log(data);
-          }
-        } catch (err) {
-          $.logErr(err);
-        }
-      });
-      setTimeout(resolve, 2000);
-    }
   });
 }
 
