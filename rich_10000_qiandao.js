@@ -29,7 +29,7 @@ if (process.env.ANHUI_WX_10000_qiandao) {
 !(async () => {
   try {
     for (let index = 0; index < userInfoArr.length; index++) {
-      const userInfo = userInfoArr[index];
+      const userinfo = userInfoArr[index];
       userIndex = index + 1;
       userOpenId = decodeURIComponent(
         userinfo.match(/userOpenId=([^; ]+)(?=;?)/) &&
