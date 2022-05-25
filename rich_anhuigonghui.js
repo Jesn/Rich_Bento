@@ -11,6 +11,7 @@ let message = "";
 let userInfoArr = [],
   openId = "",
   code = "";
+let userIndex = 0;
 
 // 判断环境变量里面是否有ANHUI_GongHui
 if (process.env.ANHUI_GongHui) {
@@ -29,6 +30,7 @@ if (process.env.ANHUI_GongHui) {
       try {
         const userinfo = userInfoArr[index];
         $.index = index + 1;
+        userIndex = $.index;
 
         openId = decodeURIComponent(
           userinfo.match(/openId=([^; ]+)(?=;?)/) &&
@@ -94,6 +96,7 @@ function qiandao() {
           message = JSON.stringify(err);
         } else {
           console.log("签到日志:" + data);
+          message = `第${userIndex}个账号:${data}`;
           if (data == "") {
             message = "签到成功";
           } else {
@@ -102,6 +105,7 @@ function qiandao() {
             console.log(message);
           }
         }
+        notify.sendNotify(`${$.name}`, data);
       } catch (e) {
         $.logErr(e);
       } finally {
