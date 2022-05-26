@@ -9,6 +9,7 @@ const notify = $.isNode() ? require("./sendNotify") : "";
 let message = "";
 
 let userInfoArr = [],
+  mobile="",
   code = "",
   userOpenId = "",
   clientOpenId = "";
@@ -32,6 +33,10 @@ if (process.env.ANHUI_WX_10000_qiandao) {
       try {
         const userInfo = userInfoArr[index];
         userIndex = index + 1;
+        mobile = decodeURIComponent(
+          userInfo.match(/mobile=([^; ]+)(?=;?)/) &&
+            userInfo.match(/mobile=([^; ]+)(?=;?)/)[1]
+        );
         userOpenId = decodeURIComponent(
           userInfo.match(/userOpenId=([^; ]+)(?=;?)/) &&
             userInfo.match(/userOpenId=([^; ]+)(?=;?)/)[1]
@@ -136,7 +141,7 @@ function query_qiandao() {
           let date = element["datetime"];
           qiandaoDate.push(date);
         }
-        let message = `第${userIndex}个账号${new Date().getMonth() + 1}月签到${
+        let message = `【${mobile}】 ${new Date().getMonth() + 1}月签到${
           qiandaoDate.length
         }天\n${qiandaoDate.reverse().join("\n")}`;
 
