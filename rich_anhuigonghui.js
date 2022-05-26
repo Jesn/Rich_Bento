@@ -5,7 +5,7 @@
 */
 
 const $ = new Env("安徽工会签到");
-const notify = $.isNode() ? require("./sendNotify") : "";
+const notify = $.isNode() ? require('./sendNotify') : '';
 let message = "";
 
 let userInfoArr = [],

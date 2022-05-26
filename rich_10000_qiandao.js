@@ -92,7 +92,53 @@ function qiandao() {
     $.post(option, (err, resp, data) => {
       try {
         console.log(data);
-        notify.sendNotify(`第${userIndex}个账号签到内容为:${data}`);
+        // notify.sendNotify(`第${userIndex}个账号签到内容为:${data}`);
+
+        query_qiandao_date();
+
+      } catch (error) {
+        console.log(error);
+      }
+    });
+  });
+}
+
+// 签到天数查询
+function query_qiandao_date() {
+  return new Promise((resolve) => {
+    const option = {
+      url: "http://wx.ah.189.cn/AhdxTjyl/querygetdate.do",
+      method: "POST",
+      body: `openid=${clientOpenId}`,
+      headers: {
+        Host: "wx.ah.189.cn",
+        Origin: "http://wx.ah.189.cn",
+        "X-Requested-With": "XMLHttpRequest",
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36 NetType/WIFI MicroMessenger/7.0.20.1781(0x6700143B) WindowsWechat(0x63060012)",
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        Referer: `http://wx.ah.189.cn/AhdxTjyl/qiandao.do?code=${code}&state=123`,
+        "Accept-Language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
+        Cookie: `openid=${userOpenId}`,
+      },
+    };
+
+    $.post(option, (err, resp, data) => {
+      try {
+        console.log(typeof(data))
+
+        let dataObj = JSON.parse(data);
+        let obj3 = dataObj["obj3"].split(',');
+        
+        let qiandaoDate = [];
+        for (let index = 0; index < obj3.length; index++) {
+          const element = obj3[index];
+          let date = element.split(":")[1];
+          qiandaoDate.push(date);
+        }
+        notify.sendNotify(
+          `第${userIndex}个账号当前月份总共签到${qiandaoDate.length}天\n:${qiandaoDate.resolve().join("\n")}`
+        );
       } catch (error) {
         console.log(error);
       }
