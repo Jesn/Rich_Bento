@@ -137,7 +137,7 @@ function query_qiandao_date() {
           qiandaoDate.push(date);
         }
         notify.sendNotify(
-          `第${userIndex}个账号当前月份总共签到${qiandaoDate.length}天\n:${qiandaoDate.resolve().join("\n")}`
+          `第${userIndex}个账号当前月份总共签到${qiandaoDate.length}天\n:${qiandaoDate.reverse().join("\n")}`
         );
       } catch (error) {
         console.log(error);
