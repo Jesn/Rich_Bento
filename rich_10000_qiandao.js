@@ -94,7 +94,7 @@ function qiandao() {
         console.log(data);
         // notify.sendNotify(`第${userIndex}个账号签到内容为:${data}`);
 
-        await query_qiandao_date();
+        await query_qiandao();
       } catch (error) {
         console.log(error);
       }
@@ -102,7 +102,8 @@ function qiandao() {
   });
 }
 
-function query_qiandao_date() {
+// 查询签到天数
+function query_qiandao() {
   return new Promise(async (resolve) => {
     const option = {
       url: "http://wx.ah.189.cn/AhdxTjyl/queryqd.do",
