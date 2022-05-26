@@ -135,7 +135,7 @@ function query_qiandao_date() {
         for (let index = 0; index < obj3.length; index++) {
           const element = obj3[index];
           console.log(`element:${element}`);
-          let date = element.split(":")[1];
+          let date = element.split(":")[1].replaceAll("\"","");
           qiandaoDate.push(date);
         }
         let message = `第${userIndex}个账号当前月份总共签到${qiandaoDate.length}天\n:${qiandaoDate.reverse().join("\n")}`;
