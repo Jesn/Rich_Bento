@@ -102,8 +102,55 @@ function qiandao() {
   });
 }
 
-// 签到天数查询
 function query_qiandao_date() {
+  return new Promise(async (resolve) => {
+    const option = {
+      url: "http://wx.ah.189.cn/AhdxTjyl/queryqd.do",
+      method: "POST",
+      body: `openid=${clientOpenId}`,
+      headers: {
+        Host: "wx.ah.189.cn",
+        Origin: "http://wx.ah.189.cn",
+        "X-Requested-With": "XMLHttpRequest",
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36 NetType/WIFI MicroMessenger/7.0.20.1781(0x6700143B) WindowsWechat(0x63060012)",
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        Referer: `http://wx.ah.189.cn/AhdxTjyl/qiandao.do?code=${code}&state=123`,
+        "Accept-Language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
+        Cookie: `openid=${userOpenId}`,
+      },
+    };
+
+    $.post(option, async (err, resp, data) => {
+      try {
+        console.log(typeof data);
+        console.log(data);
+
+        let dataObj = JSON.parse(data);
+
+        let qiandaoDate = [];
+        for (let index = 0; index < dataObj.length; index++) {
+          const element = dataObj[index];
+          console.log(`element:${element}`);
+          let date = element["datetime"];
+          qiandaoDate.push(date);
+        }
+        let message = `第${userIndex}个账号${new Date().getMonth() + 1}月签到${
+          qiandaoDate.length
+        }天\n${qiandaoDate.reverse().join("\n")}`;
+
+        console.log(message);
+
+        await notify.sendNotify(`${$.name}`, message);
+      } catch (error) {
+        console.log(error);
+      }
+    });
+  });
+}
+
+// 签到那些天有礼包
+function query_qiandao_welfare() {
   return new Promise((resolve) => {
     const option = {
       url: "http://wx.ah.189.cn/AhdxTjyl/querygetdate.do",
@@ -128,21 +175,18 @@ function query_qiandao_date() {
         console.log(data);
 
         let dataObj = JSON.parse(data);
-        let obj3 = dataObj["obj3"].replace('{','').replace('}','').split(",");
+        let obj3 = dataObj["obj3"].replace("{", "").replace("}", "").split(",");
         console.log(`obj3:${obj3}`);
 
-        let qiandaoDate = [];
+        let qiandaoDate_welfare = [];
         for (let index = 0; index < obj3.length; index++) {
           const element = obj3[index];
           console.log(`element:${element}`);
-          let date = element.split(":")[1].replaceAll("\"","");
-          qiandaoDate.push(date);
+          let date = element.split(":")[1].replaceAll('"', "");
+          qiandaoDate_welfare.push(date);
         }
-        let message = `第${userIndex}个账号${new Date().getMonth()+1}月签到${qiandaoDate.length}天\n${qiandaoDate.reverse().join("\n")}`;
 
-        console.log(message)
-
-        await notify.sendNotify(`${$.name}`,message);
+        // 礼包天数 qiandaoDate_welfare
       } catch (error) {
         console.log(error);
       }
