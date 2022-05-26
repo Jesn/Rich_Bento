@@ -71,7 +71,7 @@ if (process.env.ANHUI_WX_10000_qiandao) {
   });
 
 function qiandao() {
-  return new Promise((resolve) => {
+  return new Promise(async (resolve) => {
     const option = {
       url: "http://wx.ah.189.cn/AhdxTjyl/qd.do",
       method: "POST",
@@ -89,13 +89,12 @@ function qiandao() {
       },
     };
 
-    $.post(option, (err, resp, data) => {
+    $.post(option, async (err, resp, data) => {
       try {
         console.log(data);
         // notify.sendNotify(`第${userIndex}个账号签到内容为:${data}`);
 
-        query_qiandao_date();
-
+        await query_qiandao_date();
       } catch (error) {
         console.log(error);
       }
@@ -123,22 +122,27 @@ function query_qiandao_date() {
       },
     };
 
-    $.post(option, (err, resp, data) => {
+    $.post(option, async (err, resp, data) => {
       try {
-        console.log(typeof(data))
+        console.log(typeof data);
+        console.log(data);
 
         let dataObj = JSON.parse(data);
-        let obj3 = dataObj["obj3"].split(',');
-        
+        let obj3 = dataObj["obj3"].split(",");
+        console.log(`obj3:${obj3}`);
+
         let qiandaoDate = [];
         for (let index = 0; index < obj3.length; index++) {
           const element = obj3[index];
+          console.log(`element:${element}`);
           let date = element.split(":")[1];
           qiandaoDate.push(date);
         }
-        notify.sendNotify(
-          `第${userIndex}个账号当前月份总共签到${qiandaoDate.length}天\n:${qiandaoDate.reverse().join("\n")}`
-        );
+        let message = `第${userIndex}个账号当前月份总共签到${
+          qiandaoDate.length
+        }天\n:${qiandaoDate.reverse().join("\n")}`;
+
+        await notify.sendNotify(message);
       } catch (error) {
         console.log(error);
       }
