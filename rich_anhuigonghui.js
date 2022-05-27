@@ -5,7 +5,7 @@
 */
 
 const $ = new Env("安徽工会签到");
-const notify = $.isNode() ? require('./sendNotify') : '';
+const notify = $.isNode() ? require("./sendNotify") : "";
 let message = "";
 
 let userInfoArr = [],
@@ -74,7 +74,7 @@ if (process.env.ANHUI_GongHui) {
   });
 
 function qiandao() {
-  return new Promise((resolve) => {
+  return new Promise(async (resolve) => {
     const option = {
       url: `http://nwx.ahghw.org/act/api/qiandao?openId=${openId}`,
       method: "post",
@@ -90,22 +90,18 @@ function qiandao() {
       },
     };
 
-    $.post(option, (err, resp, data) => {
+    $.post(option, async (err, resp, data) => {
       try {
         if (err) {
           message = JSON.stringify(err);
         } else {
           console.log("签到日志:" + data);
-          message = `第${userIndex}个账号:${data}`;
-          if (data == "") {
-            message = "签到成功";
-          } else {
-            data = JSON.parse(data);
-            message = data["msg"];
-            console.log(message);
-          }
+          let obj = JSON.parse(data);
+          message = `第${userIndex}个账号:${obj["msg"]}`;
         }
-        notify.sendNotify(`${$.name}`, data);
+
+        console.log(`message:${message}`);
+        await notify.sendNotify(`${$.name}`, message);
       } catch (e) {
         $.logErr(e);
       } finally {
@@ -116,7 +112,7 @@ function qiandao() {
 }
 
 function readNewList() {
-  return new Promise((resolve) => {
+  return new Promise(async (resolve) => {
     // 获取阅读列表
     const option = {
       url: `http://nwx.ahghw.org/act/api/actJson?openId=${openId}`,
@@ -138,7 +134,7 @@ function readNewList() {
         } else {
           // return JSON.parse(data)
           console.log(data);
-          readNews(JSON.parse(data));
+          await readNews(JSON.parse(data));
         }
       } catch (error) {
         $.logErr(error);
@@ -154,7 +150,7 @@ function readNews(list) {
     return;
   }
 
-  return new Promise((resolve) => {
+  return new Promise(async (resolve) => {
     for (let index = 0; index < list.length; index++) {
       const element = list[index];
       // 获取阅读列表
