@@ -111,7 +111,7 @@ function qiandao() {
   });
 }
 
-async function readNewList() {
+ function readNewList() {
   return new Promise(async (resolve) => {
     // 获取阅读列表
     const option = {
@@ -143,14 +143,14 @@ async function readNewList() {
   });
 }
 
-async function readNews(list) {
+ function readNews(list) {
   // 读取文章
   if (list == undefined || list == null || list == "") {
     console.log("未拉取到列表");
     return;
   }
 
-  return new Promise(async (resolve) => {
+  return new Promise( (resolve) => {
     for (let index = 0; index < list.length; index++) {
       const element = list[index];
       // 获取阅读列表
