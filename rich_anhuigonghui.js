@@ -111,7 +111,7 @@ function qiandao() {
   });
 }
 
-function readNewList() {
+async function readNewList() {
   return new Promise(async (resolve) => {
     // 获取阅读列表
     const option = {
@@ -143,7 +143,7 @@ function readNewList() {
   });
 }
 
-function readNews(list) {
+async function readNews(list) {
   // 读取文章
   if (list == undefined || list == null || list == "") {
     console.log("未拉取到列表");
@@ -167,7 +167,7 @@ function readNews(list) {
           "Accept-Language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
         },
       };
-      $.get(option, (err, resp, data) => {
+      $.get(option, async(err, resp, data) => {
         try {
           if (err) {
             $.logErr(err);
