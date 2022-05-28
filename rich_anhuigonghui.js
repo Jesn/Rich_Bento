@@ -127,7 +127,7 @@ function qiandao() {
         "Accept-Language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
       },
     };
-    $.get(option, (err, resp, data) => {
+    $.get(option, async(err, resp, data) => {
       try {
         if (err) {
           $.logErr(error);
