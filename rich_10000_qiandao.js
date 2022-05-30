@@ -9,7 +9,7 @@ const notify = $.isNode() ? require("./sendNotify") : "";
 let message = "";
 
 let userInfoArr = [],
-  mobile="",
+  mobile = "",
   code = "",
   userOpenId = "",
   clientOpenId = "";
@@ -141,6 +141,11 @@ function query_qiandao() {
           let date = element["datetime"];
           qiandaoDate.push(date);
         }
+        // 时间格式倒序排序
+        qiandaoDate.sort(function (a, b) {
+          return a < b ? 1 : -1;
+        });
+
         let message = `【${mobile}】 ${new Date().getMonth() + 1}月签到${
           qiandaoDate.length
         }天\n${qiandaoDate.reverse().join("\n")}`;
