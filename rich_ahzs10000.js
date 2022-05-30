@@ -32,7 +32,7 @@ if (process.env.ANHUI_ahzs1000) {
 !(async () => {
   try {
     for (let index = 0; index < userInfoArr.length; index++) {
-      const userInfo = array[index];
+      const userInfo = userInfoArr[index];
       mobile = decodeURIComponent(
         userInfo.match(/mobile=([^; ]+)(?=;?)/) &&
           userInfo.match(/mobile=([^; ]+)(?=;?)/)[1]
