@@ -53,7 +53,7 @@ if (process.env.ANHUI_ahzs1000) {
       // 3、早起打卡第二天报名
       //   await signUpEarly()
     }
-  } catch (error) {
+  } catch (e) {
     $.logErr(e);
     await notify.sendNotify(`${$.name}`, "执行失败:" + e);
   }
