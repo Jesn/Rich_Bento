@@ -12,7 +12,7 @@
 所以在抓包的时候请使用移动或者联通网络去抓包，这个时候获取到的zwwd参数是可以通过curl请求的，我们就能正常模拟操作
 */
 
-const $ = new Env("安徽电信签到");
+const $ = new Env("安徽掌上10000");
 const notify = $.isNode() ? require("./sendNotify") : "";
 
 let userInfoArr = [],
