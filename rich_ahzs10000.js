@@ -104,10 +104,19 @@ async function signUpEarly() {
       if (resp.status == 200) {
         var obj = JSON.parse(data);
 
-        await notify.sendNotify(
-          `${$.name}`,
-          `【${mobile}】：${obj["resultMsg"]}`
-        );
+        if(obj['resultCode']==0){
+          await notify.sendNotify(
+            `${$.name}`,
+            `【${mobile}】：报名成功，次日${obj["resultData"]["ClockTime"]}`
+          );
+        }else{
+          await notify.sendNotify(
+            `${$.name}`,
+            `【${mobile}】：${obj["resultMsg"]}`
+          );
+        }
+
+     
 
         // if (
         //   obj["resultCode"] == 101 ||
