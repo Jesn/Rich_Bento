@@ -48,10 +48,12 @@ if (process.env.ANHUI_ahzs1000) {
 
       // 1、签到
       await qiandao();
+
       // 2、执行早起打卡
+      await upEarlyClock();
 
       // 3、早起打卡第二天报名
-      //   await signUpEarly()
+      await signUpEarly();
     }
   } catch (e) {
     $.logErr(e);
@@ -79,14 +81,42 @@ async function qiandao() {
       console.log(data);
       if (resp.status == 200) {
         var obj = JSON.parse(data);
-        await notify.sendNotify(`${$.name}`, `【${mobile}】：${obj["resultMsg"]}`);
+        await notify.sendNotify(
+          `${$.name}`,
+          `【${mobile}】：${obj["resultMsg"]}`
+        );
       }
     });
   });
 }
 
 // 早起打卡 05:00 至 08:000
-async function UpEarlyClock() {}
+async function upEarlyClock() {
+  return new Promise(async (resolve) => {
+    const option = {
+      url: "https://www.ahzs10000.com/palmhall/client/base/eciBusi_earlyClockln.action",
+      body: `zwwd=${zwwd}`,
+      headers: {
+        Host: "www.ahzs10000.com",
+        "User-Agent": "AHPalmr10000/4.1.0 (iPhone; iOS 13.6; Scale/2.00)",
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    };
+
+    $.post(option, async (err, resp, data) => {
+      console.log(data);
+      if (resp.status == 200) {
+        let obj = JSON.parse(data);
+        if (obj["resultCode"] == 0) {
+          await notify.sendNotify(
+            `${$.name}`,
+            `【${mobile}】：${obj['resultData']['popupTitle']}`
+          );
+        }
+      }
+    });
+  });
+}
 
 //  早起打卡 报名
 async function signUpEarly() {
@@ -104,19 +134,17 @@ async function signUpEarly() {
       if (resp.status == 200) {
         var obj = JSON.parse(data);
 
-        if(obj['resultCode']==0){
+        if (obj["resultCode"] == 0) {
           await notify.sendNotify(
             `${$.name}`,
             `【${mobile}】：报名成功，次日${obj["resultData"]["ClockTime"]}`
           );
-        }else{
+        } else {
           await notify.sendNotify(
             `${$.name}`,
             `【${mobile}】：${obj["resultMsg"]}`
           );
         }
-
-     
 
         // if (
         //   obj["resultCode"] == 101 ||
