@@ -83,7 +83,7 @@ async function qiandao() {
         var obj = JSON.parse(data);
         await notify.sendNotify(
           `${$.name}`,
-          `【${mobile}】：${obj["resultMsg"]}`
+          `【${mobile}】：${obj["resultData"]}`
         );
       }
     });
