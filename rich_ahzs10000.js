@@ -102,7 +102,7 @@ async function upEarlyClock() {
         "Content-Type": "application/x-www-form-urlencoded",
       },
     };
-
+    console.log('执行早起打卡')
     $.post(option, async (err, resp, data) => {
       console.log(data);
       if (resp.status == 200) {
@@ -129,6 +129,7 @@ async function signUpEarly() {
         "Content-Type": "application/x-www-form-urlencoded",
       },
     };
+    console.log('早起打卡报名');
     $.post(option, async (err, resp, data) => {
       console.log(data);
       if (resp.status == 200) {
