@@ -14,6 +14,8 @@ let tokens = [];
 if (process.env.yunshanfu_token) {
   if (process.env.yunshanfu_token.indexOf("&") > -1) {
     tokens = process.env.yunshanfu_token.split("&");
+  } else {
+    tokens = [process.env.yunshanfu_token];
   }
 }
 
@@ -21,7 +23,6 @@ if (process.env.yunshanfu_token) {
   try {
     for (let index = 0; index < tokens.length; index++) {
       const token = tokens[index];
-
       // 1、签到
       await qiandao(token);
     }
