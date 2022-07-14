@@ -43,14 +43,16 @@ async function qiandao(token) {
       url: "https://youhui.95516.com/newsign/api/daily_sign_in",
       body: "{}",
       headers: {
-        Host: "Host: youhui.95516.com",
-        Accept: "application/json, text/plain, */*",
-        Authorization: `Bearer ${token}`,
-        "x-city": "340100",
-        "Accept-Encoding": "gzip, deflate, br",
-        "User-Agent":
-          "Mozilla/5.0 (iPhone; CPU iPhone OS 13_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148/sa-sdk-ios      (com.unionpay.chsp) (cordova 4.5.4) (updebug 0) (version 921) (UnionPay/1.0 CloudPay) (clientVersion 181) (language zh_CN) (upHtml) (walletMode 00)",
-        "Content-Type": "application/json",
+        'Host': 'youhui.95516.com',
+        'Accept': 'application/json, text/plain, */*',
+        'Authorization': `Bearer ${token}`,
+        'Accept-Language': 'zh-cn',
+        'x-city': '340100',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Content-Type': 'application/json',
+        'Origin': 'https://youhui.95516.com',
+        'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148/sa-sdk-ios      (com.unionpay.chsp) (cordova 4.5.4) (updebug 0) (version 921) (UnionPay/1.0 CloudPay) (clientVersion 181) (language zh_CN) (upHtml) (walletMode 00)',
+        'Referer': 'https://youhui.95516.com/newsign/public/app/index.html'
       },
     };
     $.post(option, async (err, resp, data) => {
