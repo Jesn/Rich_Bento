@@ -8,23 +8,33 @@ const $ = new Env("云闪付签到");
 const notify = $.isNode() ? require("./sendNotify") : "";
 let message = "";
 
-let tokens = [];
+let userTokens = [];
 
 // 判断环境变量里面是否有 yunshanfu_token
 if (process.env.yunshanfu_token) {
   if (process.env.yunshanfu_token.indexOf("&") > -1) {
-    tokens = process.env.yunshanfu_token.split("&");
+    userTokens = process.env.yunshanfu_token.split("&");
   } else {
-    tokens = [process.env.yunshanfu_token];
+    userTokens = [process.env.yunshanfu_token];
   }
 }
 
 !(async () => {
   try {
-    for (let index = 0; index < tokens.length; index++) {
-      const token = tokens[index];
+    for (let index = 0; index < userTokens.length; index++) {
+      const utoken = userTokens[index];
+      user = decodeURIComponent(
+        utoken.match(/user=([^; ]+)(?=;?)/) &&
+        utoken.match(/user=([^; ]+)(?=;?)/)[1]
+      );
+      token = decodeURIComponent(
+        utoken.match(/token=([^; ]+)(?=;?)/) &&
+        utoken.match(/token=([^; ]+)(?=;?)/)[1]
+      );
+
+
       // 1、签到
-      await qiandao(token);
+      await qiandao(user,token);
     }
   } catch (e) {
     $.logErr(e);
@@ -37,7 +47,7 @@ if (process.env.yunshanfu_token) {
   .finally(() => {});
 
 //   签到
-async function qiandao(token) {
+async function qiandao(user,token) {
   return new Promise(async (resolve) => {
     const option = {
       url: "https://youhui.95516.com/newsign/api/daily_sign_in",
@@ -61,12 +71,12 @@ async function qiandao(token) {
         var obj = JSON.parse(data);
         await notify.sendNotify(
           `${$.name}`,
-          `今日已签到`
+          `${user} 今日已签到`
         );
       }else{
         await notify.sendNotify(
           `${$.name}`,
-          `签到异常`
+          `${user} 签到异常`
         );
       }
     });
