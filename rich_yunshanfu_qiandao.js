@@ -1,6 +1,6 @@
 /*
 [task_local]
-# 云闪付签到
+# 云闪付
 10 8 * * * https://raw.githubusercontent.com/Jesn/Rich.Bento/dev/rich_yunshanfu_qiandao.js, tag=云闪付签到, enabled=true
 */
 
@@ -57,12 +57,16 @@ async function qiandao(token) {
     };
     $.post(option, async (err, resp, data) => {
       console.log(data);
-      console.log(err);
       if (resp.status == 200) {
         var obj = JSON.parse(data);
         await notify.sendNotify(
           `${$.name}`,
-          `【${mobile}】：${obj["resultData"]}`
+          `今日已签到`
+        );
+      }else{
+        await notify.sendNotify(
+          `${$.name}`,
+          `签到异常`
         );
       }
     });
