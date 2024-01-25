@@ -1,6 +1,10 @@
 # Rich.Bento
 薅羊毛
 
+## 安装qinglong大部分依赖
+```sh
+curl -fsSL https://raw.githubusercontent.com/Jesn/Rich_Bento/dev/qinglong-yilai.sh | sh
+```
 
 ## jd 获取用户名
 ```
